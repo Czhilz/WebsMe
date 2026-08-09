@@ -11,7 +11,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
-    <!-- Instant Session Guard Script -->
     <script>
         const currentUser = JSON.parse(localStorage.getItem('currentUser'));
         if (!currentUser) {
@@ -99,7 +98,6 @@
 </head>
 <body>
 
-    <!-- Header Navbar -->
     <nav class="navbar-custom d-flex justify-content-between align-items-center">
         <div class="d-flex align-items-center gap-2">
             <i class="bi bi-mortarboard-fill text-primary fs-4"></i>
@@ -118,29 +116,27 @@
 
     <div class="container-fluid">
         <div class="row">
-            <!-- Sidebar Navigation -->
             <div class="col-md-3 col-lg-2 sidebar p-3 d-none d-md-block">
                 <div class="d-flex flex-column gap-2">
-                    <a href="#" class="nav-link-custom active">
+                    <a href="javascript:void(0)" id="navDashboard" class="nav-link-custom active" onclick="switchTab('dashboard')">
                         <i class="bi bi-speedometer2"></i> Dashboard
                     </a>
-                    <a href="#" class="nav-link-custom">
+                    <a href="javascript:void(0)" id="navTranskrip" class="nav-link-custom" onclick="switchTab('transkrip')">
                         <i class="bi bi-journal-check"></i> Transkrip Nilai
                     </a>
-                    <a href="#" class="nav-link-custom">
+                    <a href="javascript:void(0)" id="navPengaturan" class="nav-link-custom" onclick="switchTab('pengaturan')">
                         <i class="bi bi-person-gear"></i> Pengaturan
                     </a>
                 </div>
             </div>
 
-            <!-- Main Content -->
             <main class="col-md-9 col-lg-10 p-4">
                 <div class="card-custom mb-4">
                     <h4 class="fw-bold mb-1">Selamat Datang, <span id="welcomeName">User</span>!</h4>
                     <p class="text-secondary mb-0">Role Anda: <span id="welcomeRole" class="text-capitalize text-primary">Siswa</span></p>
                 </div>
 
-                <!-- 1. VIEW SISWA -->
+                <!-- SISWA VIEW -->
                 <div id="viewSiswa" class="role-view d-none">
                     <div class="card-custom">
                         <h5 class="fw-bold mb-3"><i class="bi bi-journal-text text-primary me-2"></i>Hasil Ujian Saya</h5>
@@ -153,63 +149,133 @@
                                         <th>Status</th>
                                     </tr>
                                 </thead>
-                                <tbody id="siswaNilaiBody">
-                                </tbody>
+                                <tbody id="siswaNilaiBody"></tbody>
                             </table>
                         </div>
                     </div>
                 </div>
 
-                <!-- 2. VIEW GURU -->
+                <!-- GURU VIEW -->
                 <div id="viewGuru" class="role-view d-none">
-                    <div class="card-custom">
+                    <div class="card-custom mb-4">
                         <h5 class="fw-bold mb-3"><i class="bi bi-pencil-square text-primary me-2"></i>Input Nilai Siswa</h5>
                         <form id="formInputNilai" class="row g-3">
-                            <div class="col-md-4">
-                                <input type="text" class="form-control" placeholder="NISN Siswa" required>
+                            <div class="col-md-3">
+                                <label class="form-label small text-secondary">User ID Siswa</label>
+                                <input type="number" id="inputUserId" class="form-control" placeholder="ID Siswa" required>
                             </div>
-                            <div class="col-md-4">
-                                <input type="text" class="form-control" placeholder="Mata Pelajaran" required>
+                            <div class="col-md-3">
+                                <label class="form-label small text-secondary">Mata Pelajaran</label>
+                                <input type="text" id="inputMapel" class="form-control" placeholder="Mapel" required>
                             </div>
                             <div class="col-md-2">
-                                <input type="number" class="form-control" placeholder="Nilai" min="0" max="100" required>
+                                <label class="form-label small text-secondary">Nilai UH</label>
+                                <input type="number" id="inputUH" class="form-control" placeholder="0-100" min="0" max="100" required>
                             </div>
                             <div class="col-md-2">
-                                <button type="submit" class="btn btn-primary w-100">Simpan</button>
+                                <label class="form-label small text-secondary">Nilai UTS</label>
+                                <input type="number" id="inputUTS" class="form-control" placeholder="0-100" min="0" max="100" required>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label small text-secondary">Nilai UAS</label>
+                                <input type="number" id="inputUAS" class="form-control" placeholder="0-100" min="0" max="100" required>
+                            </div>
+                            <div class="col-12 text-end">
+                                <button type="submit" class="btn btn-primary">Simpan Nilai</button>
                             </div>
                         </form>
                     </div>
-                </div>
-
-                <!-- 3. VIEW ADMIN -->
-                <div id="viewAdmin" class="role-view d-none">
-                    <div class="card-custom mb-4">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <h5 class="fw-bold mb-1"><i class="bi bi-people-fill text-primary me-2"></i>Kelola Akun System</h5>
-                                <p class="text-secondary small mb-0">Tambah, edit, atau hapus pengguna.</p>
-                            </div>
-                            <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalAddUser">
-                                <i class="bi bi-plus-lg me-1"></i> Tambah User
-                            </button>
-                        </div>
-                    </div>
 
                     <div class="card-custom">
+                        <h5 class="fw-bold mb-3"><i class="bi bi-journal-text text-primary me-2"></i>Daftar Nilai Siswa</h5>
                         <div class="table-responsive">
                             <table class="table table-dark-custom align-middle mb-0">
                                 <thead>
                                     <tr>
-                                        <th>ID</th>
-                                        <th>Username / NISN</th>
-                                        <th>Nama Lengkap</th>
-                                        <th>Role</th>
-                                        <th class="text-end">Aksi</th>
+                                        <th>ID Nilai</th>
+                                        <th>User ID</th>
+                                        <th>Mata Pelajaran</th>
+                                        <th>UH</th>
+                                        <th>UTS</th>
+                                        <th>UAS</th>
+                                        <th>Nilai Akhir</th>
                                     </tr>
                                 </thead>
-                                <tbody id="adminUserTableBody">
-                                </tbody>
+                                <tbody id="guruGradesTableBody"></tbody>
                             </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ADMIN VIEW -->
+                <div id="viewAdmin" class="role-view d-none">
+                    <div id="adminTabDashboard" class="admin-tab">
+                        <div class="card-custom mb-4">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h5 class="fw-bold mb-1"><i class="bi bi-people-fill text-primary me-2"></i>Kelola Akun System</h5>
+                                    <p class="text-secondary small mb-0">Tambah, edit, atau hapus pengguna.</p>
+                                </div>
+                                <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalAddUser">
+                                    <i class="bi bi-plus-lg me-1"></i> Tambah User
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="card-custom">
+                            <div class="table-responsive">
+                                <table class="table table-dark-custom align-middle mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Username / NISN</th>
+                                            <th>Nama Lengkap</th>
+                                            <th>Kelas</th>
+                                            <th>Role</th>
+                                            <th class="text-end">Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="adminUserTableBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="adminTabTranskrip" class="admin-tab d-none">
+                        <div class="card-custom mb-4">
+                            <h5 class="fw-bold mb-1"><i class="bi bi-journal-check text-primary me-2"></i>Rekap Transkrip Nilai Siswa</h5>
+                            <p class="text-secondary small mb-0">Semua nilai mata pelajaran terdaftar dalam sistem.</p>
+                        </div>
+                        <div class="card-custom">
+                            <div class="table-responsive">
+                                <table class="table table-dark-custom align-middle mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>ID Nilai</th>
+                                            <th>User ID</th>
+                                            <th>Mata Pelajaran</th>
+                                            <th>UH</th>
+                                            <th>UTS</th>
+                                            <th>UAS</th>
+                                            <th>Nilai Akhir</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="adminGradesTableBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="adminTabPengaturan" class="admin-tab d-none">
+                        <div class="card-custom" style="max-width: 500px;">
+                            <h5 class="fw-bold mb-3"><i class="bi bi-gear-fill text-primary me-2"></i>Pengaturan Akun Admin</h5>
+                            <form id="formUpdatePassword">
+                                <div class="mb-3">
+                                    <label class="form-label">Password Baru</label>
+                                    <input type="password" id="newAdminPassword" class="form-control" required placeholder="Masukkan password baru" />
+                                </div>
+                                <button type="submit" class="btn btn-primary btn-sm">Update Password</button>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -238,6 +304,10 @@
                         <div class="mb-3">
                             <label class="form-label">Nama Lengkap</label>
                             <input type="text" id="addFullname" class="form-control" required />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Kelas (Khusus Siswa)</label>
+                            <input type="text" id="addKelas" class="form-control" placeholder="Contoh: X PPLG 1" />
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Role</label>
@@ -275,6 +345,10 @@
                         <div class="mb-3">
                             <label class="form-label">Nama Lengkap</label>
                             <input type="text" id="editFullname" class="form-control" required />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Kelas</label>
+                            <input type="text" id="editKelas" class="form-control" placeholder="Contoh: X PPLG 1" />
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Role</label>
