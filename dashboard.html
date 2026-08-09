@@ -11,6 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
+    <!-- Instant Session Guard Script -->
     <script>
         const currentUser = JSON.parse(localStorage.getItem('currentUser'));
         if (!currentUser) {
@@ -98,6 +99,7 @@
 </head>
 <body>
 
+    <!-- Header Navbar -->
     <nav class="navbar-custom d-flex justify-content-between align-items-center">
         <div class="d-flex align-items-center gap-2">
             <i class="bi bi-mortarboard-fill text-primary fs-4"></i>
@@ -116,6 +118,7 @@
 
     <div class="container-fluid">
         <div class="row">
+            <!-- Sidebar Navigation -->
             <div class="col-md-3 col-lg-2 sidebar p-3 d-none d-md-block">
                 <div class="d-flex flex-column gap-2">
                     <a href="#" class="nav-link-custom active">
@@ -130,12 +133,14 @@
                 </div>
             </div>
 
+            <!-- Main Content -->
             <main class="col-md-9 col-lg-10 p-4">
                 <div class="card-custom mb-4">
                     <h4 class="fw-bold mb-1">Selamat Datang, <span id="welcomeName">User</span>!</h4>
                     <p class="text-secondary mb-0">Role Anda: <span id="welcomeRole" class="text-capitalize text-primary">Siswa</span></p>
                 </div>
 
+                <!-- 1. VIEW SISWA -->
                 <div id="viewSiswa" class="role-view d-none">
                     <div class="card-custom">
                         <h5 class="fw-bold mb-3"><i class="bi bi-journal-text text-primary me-2"></i>Hasil Ujian Saya</h5>
@@ -155,6 +160,7 @@
                     </div>
                 </div>
 
+                <!-- 2. VIEW GURU -->
                 <div id="viewGuru" class="role-view d-none">
                     <div class="card-custom">
                         <h5 class="fw-bold mb-3"><i class="bi bi-pencil-square text-primary me-2"></i>Input Nilai Siswa</h5>
@@ -175,6 +181,7 @@
                     </div>
                 </div>
 
+                <!-- 3. VIEW ADMIN -->
                 <div id="viewAdmin" class="role-view d-none">
                     <div class="card-custom mb-4">
                         <div class="d-flex justify-content-between align-items-center">
@@ -210,6 +217,7 @@
         </div>
     </div>
 
+    <!-- Modal Tambah User -->
     <div class="modal fade" id="modalAddUser" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -249,6 +257,7 @@
         </div>
     </div>
 
+    <!-- Modal Edit User -->
     <div class="modal fade" id="modalEditUser" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">

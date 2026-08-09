@@ -2,14 +2,20 @@ const SUPABASE_URL = 'https://ycnqeieeoleoadomziji.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_ESTYAVuV59-R0FLJzVpgow_8CUukRgE';
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// Retrieve session from localStorage
-const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+// Use existing session from head script, or read from localStorage
+let userSession = typeof currentUser !== 'undefined' 
+    ? currentUser 
+    : JSON.parse(localStorage.getItem('currentUser'));
 
-if (!currentUser) {
+if (!userSession) {
     window.location.href = 'index.html';
 } else {
-    const fullname = currentUser.fullname || currentUser.username;
-    const role = (currentUser.role || 'siswa').toLowerCase();
+    initDashboard(userSession);
+}
+
+function initDashboard(user) {
+    const fullname = user.fullname || user.username;
+    const role = (user.role || 'siswa').toLowerCase();
 
     document.getElementById('userFullname').textContent = fullname;
     document.getElementById('welcomeName').textContent = fullname;
@@ -17,13 +23,13 @@ if (!currentUser) {
     document.getElementById('welcomeRole').textContent = role;
 
     if (role === 'admin') {
-        document.getElementById('viewAdmin').classList.remove('d-none');
+        document.getElementById('viewAdmin')?.classList.remove('d-none');
         loadAdminUsers();
     } else if (role === 'guru') {
-        document.getElementById('viewGuru').classList.remove('d-none');
+        document.getElementById('viewGuru')?.classList.remove('d-none');
     } else {
-        document.getElementById('viewSiswa').classList.remove('d-none');
-        loadStudentGrades(currentUser.id);
+        document.getElementById('viewSiswa')?.classList.remove('d-none');
+        loadStudentGrades(user.id);
     }
 }
 
@@ -161,7 +167,13 @@ async function loadStudentGrades(userId) {
     }).join('');
 }
 
-document.getElementById('btnLogout')?.addEventListener('click', function() {
-    localStorage.removeItem('currentUser');
-    window.location.href = 'index.html';
+// Attach logout handler directly
+document.addEventListener('DOMContentLoaded', function() {
+    const btnLogout = document.getElementById('btnLogout');
+    if (btnLogout) {
+        btnLogout.addEventListener('click', function() {
+            localStorage.removeItem('currentUser');
+            window.location.href = 'index.html';
+        });
+    }
 });
