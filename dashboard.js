@@ -29,7 +29,8 @@ function initDashboard(user) {
         loadAdminUsers();
     } else if (role === 'guru') {
         document.getElementById('viewGuru')?.classList.remove('d-none');
-        loadAllGrades('guruGradesTableBody');
+        populateStudentDropdown();
+        loadGuruGrades();
     } else {
         document.getElementById('viewSiswa')?.classList.remove('d-none');
         loadStudentGrades(user.id);
@@ -61,7 +62,7 @@ window.switchTab = function(tabName) {
             switchAdminTab('transkrip');
         } else if (role === 'guru') {
             document.getElementById('viewGuru')?.classList.remove('d-none');
-            loadAllGrades('guruGradesTableBody');
+            loadGuruGrades();
         } else {
             document.getElementById('viewSiswa')?.classList.remove('d-none');
             loadStudentGrades(userSession.id);
@@ -108,6 +109,151 @@ document.getElementById('btnToggleTheme')?.addEventListener('click', function() 
     localStorage.setItem('appTheme', newTheme);
     updateThemeUI();
 });
+
+// Populate dropdown list of students for Guru input form
+async function populateStudentDropdown() {
+    const selectEl = document.getElementById('inputUserId');
+    if (!selectEl) return;
+
+    const { data: students, error } = await supabaseClient
+        .from('users')
+        .select('id, username, fullname, kelas')
+        .eq('role', 'siswa')
+        .order('fullname', { ascending: true });
+
+    if (error || !students || students.length === 0) {
+        selectEl.innerHTML = '<option value="">Belum ada data siswa</option>';
+        return;
+    }
+
+    selectEl.innerHTML = '<option value="">-- Pilih Siswa --</option>' + 
+        students.map(s => `
+            <option value="${s.id}">${s.fullname || s.username} (${s.kelas || 'Tanpa Kelas'})</option>
+        `).join('');
+}
+
+// Load grade list for Guru with mapped Student Names & Class
+async function loadGuruGrades() {
+    const tableBody = document.getElementById('guruGradesTableBody');
+    if (!tableBody) return;
+
+    const { data: students } = await supabaseClient
+        .from('users')
+        .select('id, fullname, kelas')
+        .eq('role', 'siswa');
+
+    const studentMap = {};
+    (students || []).forEach(s => { studentMap[s.id] = s; });
+
+    const { data: grades, error } = await supabaseClient
+        .from('nilai')
+        .select('*')
+        .order('id', { ascending: false });
+
+    if (error || !grades || grades.length === 0) {
+        tableBody.innerHTML = `<tr><td colspan="9" class="text-center text-secondary">Belum ada data nilai tersimpan.</td></tr>`;
+        return;
+    }
+
+    tableBody.innerHTML = grades.map(g => {
+        const student = studentMap[g.user_id] || { fullname: `User #${g.user_id}`, kelas: '-' };
+        const avg = Math.round((g.uh + g.uts + g.uas) / 3);
+        return `
+            <tr>
+                <td>${g.id}</td>
+                <td>${student.fullname}</td>
+                <td>${student.kelas}</td>
+                <td>${g.mata_pelajaran}</td>
+                <td>${g.uh}</td>
+                <td>${g.uts}</td>
+                <td>${g.uas}</td>
+                <td class="fw-bold text-primary">${avg}</td>
+                <td class="text-end">
+                    <button class="btn btn-sm btn-outline-danger" onclick="deleteGrade(${g.id})">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </td>
+            </tr>
+        `;
+    }).join('');
+}
+
+// Load personal grades and compute summary metrics for Siswa
+async function loadStudentGrades(userId) {
+    const tableBody = document.getElementById('siswaNilaiBody');
+    if (!tableBody) return;
+
+    const { data: grades, error } = await supabaseClient
+        .from('nilai')
+        .select('*')
+        .eq('user_id', userId);
+
+    if (error || !grades || grades.length === 0) {
+        tableBody.innerHTML = `<tr><td colspan="6" class="text-center text-secondary">Belum ada data nilai.</td></tr>`;
+        document.getElementById('statAvgGrade').textContent = '0';
+        document.getElementById('statTotalSubjects').textContent = '0';
+        document.getElementById('statAcademicStatus').textContent = '-';
+        return;
+    }
+
+    let totalSum = 0;
+    let totalPassed = 0;
+
+    tableBody.innerHTML = grades.map(item => {
+        const finalGrade = Math.round((item.uh + item.uts + item.uas) / 3);
+        totalSum += finalGrade;
+
+        const isPassed = finalGrade >= 75;
+        if (isPassed) totalPassed++;
+
+        const status = isPassed 
+            ? '<span class="badge bg-success">Tuntas</span>' 
+            : '<span class="badge bg-danger">Remedial</span>';
+
+        return `
+            <tr>
+                <td>${item.mata_pelajaran}</td>
+                <td>${item.uh}</td>
+                <td>${item.uts}</td>
+                <td>${item.uas}</td>
+                <td class="fw-bold text-primary">${finalGrade}</td>
+                <td>${status}</td>
+            </tr>
+        `;
+    }).join('');
+
+    const avgGrade = Math.round(totalSum / grades.length);
+    document.getElementById('statAvgGrade').textContent = avgGrade;
+    document.getElementById('statTotalSubjects').textContent = grades.length;
+
+    const statusEl = document.getElementById('statAcademicStatus');
+    if (avgGrade >= 75 && totalPassed === grades.length) {
+        statusEl.textContent = 'Tuntas';
+        statusEl.className = 'fw-bold text-success mt-1 mb-0';
+    } else {
+        statusEl.textContent = 'Perlu Remedial';
+        statusEl.className = 'fw-bold text-warning mt-1 mb-0';
+    }
+}
+
+// Delete Grade (Guru & Admin)
+window.deleteGrade = async function(id) {
+    if (!confirm('Yakin ingin menghapus data nilai ini?')) return;
+
+    const { error } = await supabaseClient
+        .from('nilai')
+        .delete()
+        .eq('id', id);
+
+    if (error) {
+        alert('Gagal menghapus nilai: ' + error.message);
+        return;
+    }
+
+    const role = (userSession.role || 'siswa').toLowerCase();
+    if (role === 'guru') loadGuruGrades();
+    else if (role === 'admin') loadAllGrades('adminGradesTableBody');
+};
 
 async function loadAdminUsers() {
     const tableBody = document.getElementById('adminUserTableBody');
@@ -227,7 +373,7 @@ async function loadAllGrades(targetTableId) {
         .order('id', { ascending: true });
 
     if (error || !grades || grades.length === 0) {
-        tableBody.innerHTML = `<tr><td colspan="7" class="text-center text-secondary">Belum ada data nilai tersimpan.</td></tr>`;
+        tableBody.innerHTML = `<tr><td colspan="8" class="text-center text-secondary">Belum ada data nilai tersimpan.</td></tr>`;
         return;
     }
 
@@ -242,36 +388,11 @@ async function loadAllGrades(targetTableId) {
                 <td>${g.uts}</td>
                 <td>${g.uas}</td>
                 <td class="fw-bold text-primary">${avg}</td>
-            </tr>
-        `;
-    }).join('');
-}
-
-async function loadStudentGrades(userId) {
-    const tableBody = document.getElementById('siswaNilaiBody');
-    if (!tableBody) return;
-
-    const { data: grades, error } = await supabaseClient
-        .from('nilai')
-        .select('*')
-        .eq('user_id', userId);
-
-    if (error || !grades || grades.length === 0) {
-        tableBody.innerHTML = `<tr><td colspan="3" class="text-center text-secondary">Belum ada data nilai.</td></tr>`;
-        return;
-    }
-
-    tableBody.innerHTML = grades.map(item => {
-        const finalGrade = Math.round((item.uh + item.uts + item.uas) / 3);
-        const status = finalGrade >= 75 
-            ? '<span class="badge bg-success">Tuntas</span>' 
-            : '<span class="badge bg-danger">Remedial</span>';
-
-        return `
-            <tr>
-                <td>${item.mata_pelajaran}</td>
-                <td class="fw-bold text-primary">${finalGrade}</td>
-                <td>${status}</td>
+                <td class="text-end">
+                    <button class="btn btn-sm btn-outline-danger" onclick="deleteGrade(${g.id})">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </td>
             </tr>
         `;
     }).join('');
@@ -285,6 +406,11 @@ document.getElementById('formInputNilai')?.addEventListener('submit', async func
     const uts = parseInt(document.getElementById('inputUTS').value);
     const uas = parseInt(document.getElementById('inputUAS').value);
 
+    if (!user_id) {
+        alert('Silakan pilih siswa terlebih dahulu.');
+        return;
+    }
+
     const { error } = await supabaseClient
         .from('nilai')
         .insert([{ user_id, mata_pelajaran, uh, uts, uas }]);
@@ -296,7 +422,7 @@ document.getElementById('formInputNilai')?.addEventListener('submit', async func
 
     alert('Nilai berhasil disimpan!');
     document.getElementById('formInputNilai').reset();
-    loadAllGrades('guruGradesTableBody');
+    loadGuruGrades();
 });
 
 document.getElementById('formUpdatePassword')?.addEventListener('submit', async function(e) {
