@@ -433,7 +433,7 @@ async function populateStudentDropdown() {
   let query = supabaseClient
     .from("users")
     .select(
-      "id, username, fullname, kelas_id, kelas, kelas:kelas_id(nama_kelas)",
+      "id, username, fullname, kelas_id, kelas, kelas_rel:kelas_id(nama_kelas)",
     )
     .eq("role", "siswa")
     .order("fullname", { ascending: true });
@@ -454,12 +454,9 @@ async function populateStudentDropdown() {
     '<option value="">-- Pilih Siswa --</option>' +
     students
       .map((s) => {
-        // Priority: Joined object name -> text column -> fallback dash
-        const namaKelas =
-          s.kelas?.nama_kelas ||
-          (typeof s.kelas === "string" ? s.kelas : null) ||
-          "Tanpa Kelas";
-        return `<option value="${s.id}">${s.fullname || s.username} (${namaKelas})</option>`;
+        // Priority: Relational object -> String column -> Fallback
+        const className = s.kelas_rel?.nama_kelas || s.kelas || "Tanpa Kelas";
+        return `<option value="${s.id}">${s.fullname || s.username} (${className})</option>`;
       })
       .join("");
 }
