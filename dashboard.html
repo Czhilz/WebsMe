@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" data-bs-theme="dark">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -16,6 +16,8 @@
         if (!currentUser) {
             window.location.href = 'index.html';
         }
+        const savedTheme = localStorage.getItem('appTheme') || 'dark';
+        document.documentElement.setAttribute('data-bs-theme', savedTheme);
     </script>
 
     <style>
@@ -25,6 +27,7 @@
             background-color: #0f172a;
             color: #f8fafc;
             min-height: 100vh;
+            transition: background-color 0.3s, color 0.3s;
         }
         .navbar-custom {
             background-color: #1e293b;
@@ -93,6 +96,35 @@
             background-color: #0f172a;
             color: #f8fafc;
             border-color: #3b82f6;
+        }
+
+        /* Light Mode Theme Styles */
+        [data-bs-theme="light"] body {
+            background-color: #f8fafc;
+            color: #0f172a;
+        }
+        [data-bs-theme="light"] .card-custom, 
+        [data-bs-theme="light"] .navbar-custom, 
+        [data-bs-theme="light"] .sidebar, 
+        [data-bs-theme="light"] .table-dark-custom td {
+            background-color: #ffffff;
+            border-color: #e2e8f0;
+            color: #0f172a;
+        }
+        [data-bs-theme="light"] .table-dark-custom th {
+            background-color: #f1f5f9;
+            border-color: #e2e8f0;
+            color: #475569;
+        }
+        [data-bs-theme="light"] .nav-link-custom {
+            color: #64748b;
+        }
+        [data-bs-theme="light"] .form-control, 
+        [data-bs-theme="light"] .form-select, 
+        [data-bs-theme="light"] .modal-content {
+            background-color: #ffffff;
+            border-color: #cbd5e1;
+            color: #0f172a;
         }
     </style>
 </head>
@@ -265,25 +297,40 @@
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <div id="adminTabPengaturan" class="admin-tab d-none">
-                        <div class="card-custom" style="max-width: 500px;">
-                            <h5 class="fw-bold mb-3"><i class="bi bi-gear-fill text-primary me-2"></i>Pengaturan Akun Admin</h5>
-                            <form id="formUpdatePassword">
-                                <div class="mb-3">
-                                    <label class="form-label">Password Baru</label>
-                                    <input type="password" id="newAdminPassword" class="form-control" required placeholder="Masukkan password baru" />
-                                </div>
-                                <button type="submit" class="btn btn-primary btn-sm">Update Password</button>
-                            </form>
+                <!-- SHARED PENGATURAN VIEW -->
+                <div id="viewPengaturan" class="role-view d-none">
+                    <div class="card-custom mb-4" style="max-width: 500px;">
+                        <h5 class="fw-bold mb-3"><i class="bi bi-palette-fill text-primary me-2"></i>Tampilan Aplikasi</h5>
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div>
+                                <div class="fw-semibold">Tema Warna</div>
+                                <small class="text-secondary">Pilih antara Dark Mode atau Light Mode</small>
+                            </div>
+                            <button id="btnToggleTheme" class="btn btn-outline-primary btn-sm">
+                                <i class="bi bi-moon-stars me-1" id="themeIcon"></i>
+                                <span id="themeLabel">Dark Mode</span>
+                            </button>
                         </div>
+                    </div>
+
+                    <div id="adminPasswordSection" class="card-custom d-none" style="max-width: 500px;">
+                        <h5 class="fw-bold mb-3"><i class="bi bi-shield-lock-fill text-primary me-2"></i>Keamanan Admin</h5>
+                        <form id="formUpdatePassword">
+                            <div class="mb-3">
+                                <label class="form-label">Password Baru</label>
+                                <input type="password" id="newAdminPassword" class="form-control" required placeholder="Masukkan password baru" />
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-sm">Update Password</button>
+                        </form>
                     </div>
                 </div>
             </main>
         </div>
     </div>
 
-    <!-- Modal Tambah User -->
+    <!-- Modal Add & Edit User Code Unchanged... -->
     <div class="modal fade" id="modalAddUser" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -327,7 +374,6 @@
         </div>
     </div>
 
-    <!-- Modal Edit User -->
     <div class="modal fade" id="modalEditUser" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">

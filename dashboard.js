@@ -21,8 +21,11 @@ function initDashboard(user) {
     document.getElementById('userRole').textContent = role;
     document.getElementById('welcomeRole').textContent = role;
 
+    updateThemeUI();
+
     if (role === 'admin') {
         document.getElementById('viewAdmin')?.classList.remove('d-none');
+        document.getElementById('adminPasswordSection')?.classList.remove('d-none');
         loadAdminUsers();
     } else if (role === 'guru') {
         document.getElementById('viewGuru')?.classList.remove('d-none');
@@ -35,11 +38,12 @@ function initDashboard(user) {
 
 window.switchTab = function(tabName) {
     const role = (userSession.role || 'siswa').toLowerCase();
+
     document.querySelectorAll('.sidebar .nav-link-custom').forEach(link => link.classList.remove('active'));
+    document.querySelectorAll('.role-view').forEach(view => view.classList.add('d-none'));
 
     if (tabName === 'dashboard') {
         document.getElementById('navDashboard')?.classList.add('active');
-        document.querySelectorAll('.role-view').forEach(view => view.classList.add('d-none'));
 
         if (role === 'admin') {
             document.getElementById('viewAdmin')?.classList.remove('d-none');
@@ -51,6 +55,7 @@ window.switchTab = function(tabName) {
         }
     } else if (tabName === 'transkrip') {
         document.getElementById('navTranskrip')?.classList.add('active');
+
         if (role === 'admin') {
             document.getElementById('viewAdmin')?.classList.remove('d-none');
             switchAdminTab('transkrip');
@@ -63,10 +68,7 @@ window.switchTab = function(tabName) {
         }
     } else if (tabName === 'pengaturan') {
         document.getElementById('navPengaturan')?.classList.add('active');
-        if (role === 'admin') {
-            document.getElementById('viewAdmin')?.classList.remove('d-none');
-            switchAdminTab('pengaturan');
-        }
+        document.getElementById('viewPengaturan')?.classList.remove('d-none');
     }
 };
 
@@ -79,10 +81,33 @@ function switchAdminTab(tabName) {
     } else if (tabName === 'transkrip') {
         document.getElementById('adminTabTranskrip')?.classList.remove('d-none');
         loadAllGrades('adminGradesTableBody');
-    } else if (tabName === 'pengaturan') {
-        document.getElementById('adminTabPengaturan')?.classList.remove('d-none');
     }
 }
+
+function updateThemeUI() {
+    const currentTheme = document.documentElement.getAttribute('data-bs-theme') || 'dark';
+    const label = document.getElementById('themeLabel');
+    const icon = document.getElementById('themeIcon');
+
+    if (label && icon) {
+        if (currentTheme === 'dark') {
+            label.textContent = 'Dark Mode';
+            icon.className = 'bi bi-moon-stars me-1';
+        } else {
+            label.textContent = 'Light Mode';
+            icon.className = 'bi bi-sun-fill me-1';
+        }
+    }
+}
+
+document.getElementById('btnToggleTheme')?.addEventListener('click', function() {
+    const currentTheme = document.documentElement.getAttribute('data-bs-theme') || 'dark';
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+    document.documentElement.setAttribute('data-bs-theme', newTheme);
+    localStorage.setItem('appTheme', newTheme);
+    updateThemeUI();
+});
 
 async function loadAdminUsers() {
     const tableBody = document.getElementById('adminUserTableBody');
