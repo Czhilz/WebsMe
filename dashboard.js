@@ -398,6 +398,35 @@ async function loadAllGrades(targetTableId) {
     }).join('');
 }
 
+async function populateStudentDropdown() {
+    const selectEl = document.getElementById('inputUserId');
+    if (!selectEl) return;
+
+    // Optional: Filter students to match the logged-in teacher's assigned class (userSession.kelas_id)
+    let query = supabaseClient
+        .from('users')
+        .select('id, username, fullname, kelas_id, kelas(nama_kelas)')
+        .eq('role', 'siswa')
+        .order('fullname', { ascending: true });
+
+    if (userSession.kelas_id) {
+        query = query.eq('kelas_id', userSession.kelas_id);
+    }
+
+    const { data: students, error } = await query;
+
+    if (error || !students || students.length === 0) {
+        selectEl.innerHTML = '<option value="">Tidak ada siswa di kelas ini</option>';
+        return;
+    }
+
+    selectEl.innerHTML = '<option value="">-- Pilih Siswa --</option>' + 
+        students.map(s => {
+            const namaKelas = s.kelas?.nama_kelas || 'Tanpa Kelas';
+            return `<option value="${s.id}">${s.fullname || s.username} (${namaKelas})</option>`;
+        }).join('');
+}
+
 document.getElementById('formInputNilai')?.addEventListener('submit', async function(e) {
     e.preventDefault();
     const user_id = document.getElementById('inputUserId').value;

@@ -360,7 +360,7 @@
         </div>
     </div>
 
-    <!-- Modal Add User -->
+ <!-- Modal Add User -->
     <div class="modal fade" id="modalAddUser" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -383,8 +383,10 @@
                             <input type="text" id="addFullname" class="form-control" required />
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Kelas (Khusus Siswa)</label>
-                            <input type="text" id="addKelas" class="form-control" placeholder="Contoh: X PPLG 1" />
+                            <label class="form-label">Kelas / Ampuan</label>
+                            <select id="addKelasId" class="form-select">
+                                <option value="">-- Pilih Kelas --</option>
+                            </select>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Role</label>
@@ -424,8 +426,10 @@
                             <input type="text" id="editFullname" class="form-control" required />
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Kelas</label>
-                            <input type="text" id="editKelas" class="form-control" placeholder="Contoh: X PPLG 1" />
+                            <label class="form-label">Kelas / Ampuan</label>
+                            <select id="editKelasId" class="form-select">
+                                <option value="">-- Pilih Kelas --</option>
+                            </select>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Role</label>
