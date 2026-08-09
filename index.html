@@ -9,6 +9,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -218,50 +219,6 @@
         </div>
     </div>
 
-    <script>
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const username = document.getElementById('username').value.trim();
-            const password = document.getElementById('password').value;
-
-            if (!username || !password) {
-                showAlert('Username dan password harus diisi!', 'danger');
-                return;
-            }
-
-            // Simulated pre-provisioned DB accounts
-            const mockUsers = [
-                { username: 'admin', password: '123', fullname: 'Administrator', role: 'Admin' },
-                { username: 'siswa', password: '123', fullname: 'Siswa Demo', role: 'Siswa' }
-            ];
-
-            const foundUser = mockUsers.find(user => 
-                user.username === username && user.password === password
-            );
-
-            if (foundUser) {
-                localStorage.setItem('currentUser', JSON.stringify(foundUser));
-                showAlert('Login berhasil! Selamat datang ' + foundUser.fullname, 'success');
-                
-                setTimeout(() => {
-                    window.location.href = 'dashboard.html';
-                }, 1500);
-            } else {
-                showAlert('NISN/NIP atau Password salah!', 'danger');
-            }
-        });
-
-        function showAlert(message, type) {
-            const alertEl = document.getElementById('alertMessage');
-            alertEl.textContent = message;
-            alertEl.className = `alert alert-${type}`;
-            alertEl.classList.remove('d-none');
-            
-            setTimeout(() => {
-                alertEl.classList.add('d-none');
-            }, 4000);
-        }
-    </script>
+    <script src="LoginPage.js"></script>
 </body>
 </html>
