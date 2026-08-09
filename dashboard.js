@@ -37,9 +37,10 @@ async function loadAdminUsers() {
     const tableBody = document.getElementById('adminUserTableBody');
     if (!tableBody) return;
 
+    // Fetch only non-sensitive columns
     const { data: users, error } = await supabaseClient
         .from('users')
-        .select('*')
+        .select('id, username, fullname, role')
         .order('id', { ascending: true });
 
     if (error || !users) {
