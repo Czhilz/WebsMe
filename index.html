@@ -1,224 +1,277 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
-<head>
+  <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Login · Sistem Informasi Sekolah</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Poppins', sans-serif;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #0f172a;
-            padding: 1.5rem;
-            position: relative;
-            overflow-x: hidden;
-            color: #f8fafc;
-        }
-        body::before {
-            content: '';
-            position: absolute;
-            top: -20%;
-            right: -10%;
-            width: 450px;
-            height: 450px;
-            background: rgba(59, 130, 246, 0.12);
-            border-radius: 50%;
-            pointer-events: none;
-            filter: blur(40px);
-        }
-        body::after {
-            content: '';
-            position: absolute;
-            bottom: -20%;
-            left: -10%;
-            width: 400px;
-            height: 400px;
-            background: rgba(30, 41, 59, 0.8);
-            border-radius: 50%;
-            pointer-events: none;
-            filter: blur(40px);
-        }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: "Poppins", sans-serif;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #0f172a;
+        padding: 1.5rem;
+        position: relative;
+        overflow-x: hidden;
+        color: #f8fafc;
+      }
+      body::before {
+        content: "";
+        position: absolute;
+        top: -20%;
+        right: -10%;
+        width: 450px;
+        height: 450px;
+        background: rgba(59, 130, 246, 0.12);
+        border-radius: 50%;
+        pointer-events: none;
+        filter: blur(40px);
+      }
+      body::after {
+        content: "";
+        position: absolute;
+        bottom: -20%;
+        left: -10%;
+        width: 400px;
+        height: 400px;
+        background: rgba(30, 41, 59, 0.8);
+        border-radius: 50%;
+        pointer-events: none;
+        filter: blur(40px);
+      }
+      .login-card {
+        background: #1e293b;
+        border-radius: 1.5rem;
+        padding: 2.5rem 2.2rem;
+        max-width: 420px;
+        width: 100%;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        border: 1px solid #334155;
+        position: relative;
+        z-index: 2;
+      }
+      .login-card .logo-area {
+        text-align: center;
+        margin-bottom: 2rem;
+      }
+      .login-card .logo-area h1 {
+        font-weight: 700;
+        font-size: 1.5rem;
+        color: #f8fafc;
+        letter-spacing: -0.02em;
+        margin-bottom: 0.2rem;
+      }
+      .login-card .logo-area h1 i {
+        color: #3b82f6;
+      }
+      .login-card .logo-area p {
+        color: #94a3b8;
+        font-size: 0.88rem;
+        font-weight: 500;
+        margin: 0;
+      }
+      .login-card .logo-area .line-decoration {
+        width: 50px;
+        height: 3px;
+        background: #3b82f6;
+        margin: 0.6rem auto 0 auto;
+        border-radius: 10px;
+      }
+      .login-card .input-group-custom {
+        position: relative;
+        margin-bottom: 1.2rem;
+      }
+      .login-card .input-group-custom .input-icon {
+        position: absolute;
+        left: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #3b82f6;
+        font-size: 1.1rem;
+        z-index: 4;
+      }
+      .login-card .input-group-custom input {
+        width: 100%;
+        padding: 0.75rem 1rem 0.75rem 2.8rem;
+        border: 1px solid #334155;
+        border-radius: 0.75rem;
+        font-size: 0.92rem;
+        background: #0f172a;
+        transition:
+          border-color 0.2s,
+          box-shadow 0.2s;
+        color: #f8fafc;
+        font-weight: 400;
+      }
+      .login-card .input-group-custom input:focus {
+        outline: none;
+        border-color: #3b82f6;
+        background: #0f172a;
+        color: #f8fafc;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+      }
+      .login-card .input-group-custom input::placeholder {
+        color: #64748b;
+        font-weight: 400;
+        font-size: 0.88rem;
+      }
+      .login-card .btn-login {
+        width: 100%;
+        padding: 0.8rem;
+        border: none;
+        border-radius: 0.75rem;
+        background: #3b82f6;
+        color: white;
+        font-weight: 600;
+        font-size: 0.95rem;
+        transition:
+          background 0.2s,
+          transform 0.1s;
+        margin-top: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.6rem;
+      }
+      .login-card .btn-login:hover {
+        background: #2563eb;
+      }
+      .login-card .btn-login:active {
+        transform: scale(0.98);
+      }
+      .login-card .admin-note {
+        text-align: center;
+        margin-top: 1.2rem;
+        font-size: 0.82rem;
+        color: #64748b;
+        line-height: 1.4;
+      }
+      .login-card .alert {
+        border-radius: 0.75rem;
+        font-size: 0.85rem;
+        padding: 0.6rem 1rem;
+      }
+      .social-links {
+        display: flex;
+        justify-content: center;
+        gap: 1.5rem;
+        margin-top: 1.5rem;
+        padding-top: 1.2rem;
+        border-top: 1px solid #334155;
+      }
+      .social-links a {
+        color: #64748b;
+        font-size: 0.85rem;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+      }
+      .social-links a:hover {
+        color: #f8fafc;
+      }
+      .social-links a i {
+        font-size: 1rem;
+      }
+      @media (max-width: 480px) {
         .login-card {
-            background: #1e293b;
-            border-radius: 1.5rem;
-            padding: 2.5rem 2.2rem;
-            max-width: 420px;
-            width: 100%;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-            border: 1px solid #334155;
-            position: relative;
-            z-index: 2;
-        }
-        .login-card .logo-area {
-            text-align: center;
-            margin-bottom: 2rem;
+          padding: 2rem 1.5rem;
         }
         .login-card .logo-area h1 {
-            font-weight: 700;
-            font-size: 1.5rem;
-            color: #f8fafc;
-            letter-spacing: -0.02em;
-            margin-bottom: 0.2rem;
-        }
-        .login-card .logo-area h1 i { color: #3b82f6; }
-        .login-card .logo-area p {
-            color: #94a3b8;
-            font-size: 0.88rem;
-            font-weight: 500;
-            margin: 0;
-        }
-        .login-card .logo-area .line-decoration {
-            width: 50px;
-            height: 3px;
-            background: #3b82f6;
-            margin: 0.6rem auto 0 auto;
-            border-radius: 10px;
-        }
-        .login-card .input-group-custom {
-            position: relative;
-            margin-bottom: 1.2rem;
-        }
-        .login-card .input-group-custom .input-icon {
-            position: absolute;
-            left: 14px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #3b82f6;
-            font-size: 1.1rem;
-            z-index: 4;
-        }
-        .login-card .input-group-custom input {
-            width: 100%;
-            padding: 0.75rem 1rem 0.75rem 2.8rem;
-            border: 1px solid #334155;
-            border-radius: 0.75rem;
-            font-size: 0.92rem;
-            background: #0f172a;
-            transition: border-color 0.2s, box-shadow 0.2s;
-            color: #f8fafc;
-            font-weight: 400;
-        }
-        .login-card .input-group-custom input:focus {
-            outline: none;
-            border-color: #3b82f6;
-            background: #0f172a;
-            color: #f8fafc;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
-        }
-        .login-card .input-group-custom input::placeholder {
-            color: #64748b;
-            font-weight: 400;
-            font-size: 0.88rem;
-        }
-        .login-card .btn-login {
-            width: 100%;
-            padding: 0.8rem;
-            border: none;
-            border-radius: 0.75rem;
-            background: #3b82f6;
-            color: white;
-            font-weight: 600;
-            font-size: 0.95rem;
-            transition: background 0.2s, transform 0.1s;
-            margin-top: 0.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.6rem;
-        }
-        .login-card .btn-login:hover {
-            background: #2563eb;
-        }
-        .login-card .btn-login:active {
-            transform: scale(0.98);
-        }
-        .login-card .admin-note {
-            text-align: center;
-            margin-top: 1.2rem;
-            font-size: 0.82rem;
-            color: #64748b;
-            line-height: 1.4;
-        }
-        .login-card .alert {
-            border-radius: 0.75rem;
-            font-size: 0.85rem;
-            padding: 0.6rem 1rem;
+          font-size: 1.3rem;
         }
         .social-links {
-            display: flex;
-            justify-content: center;
-            gap: 1.5rem;
-            margin-top: 1.5rem;
-            padding-top: 1.2rem;
-            border-top: 1px solid #334155;
+          flex-wrap: wrap;
+          gap: 0.8rem;
         }
-        .social-links a {
-            color: #64748b;
-            font-size: 0.85rem;
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 0.3rem;
-        }
-        .social-links a:hover { color: #f8fafc; }
-        .social-links a i { font-size: 1rem; }
-        @media (max-width: 480px) {
-            .login-card { padding: 2rem 1.5rem; }
-            .login-card .logo-area h1 { font-size: 1.3rem; }
-            .social-links { flex-wrap: wrap; gap: 0.8rem; }
-        }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="login-card">
-        <div class="logo-area">
-            <h1><i class="bi bi-mortarboard-fill"></i> SISFO</h1>
-            <p>Sistem Informasi Sekolah</p>
-            <div class="line-decoration"></div>
-        </div>
+      <div class="logo-area">
+        <h1><i class="bi bi-mortarboard-fill"></i> SISFO</h1>
+        <p>Sistem Informasi Sekolah</p>
+        <div class="line-decoration"></div>
+      </div>
 
-        <div id="alertMessage" class="alert d-none" role="alert"></div>
+      <div id="alertMessage" class="alert d-none" role="alert"></div>
 
-        <form id="loginForm">
-            <div class="input-group-custom">
-                <span class="input-icon"><i class="bi bi-person"></i></span>
-                <input type="text" class="form-control" id="username" placeholder="NISN / NIP / Username" required autocomplete="off" />
-            </div>
-            <div class="input-group-custom">
-                <span class="input-icon"><i class="bi bi-lock"></i></span>
-                <input type="password" class="form-control" id="password" placeholder="Masukkan password" required />
-            </div>
-            <button type="submit" class="btn-login">
-                <i class="bi bi-box-arrow-in-right"></i> LOGIN
-            </button>
-        </form>
+      <form id="loginForm">
+        <div class="input-group-custom">
+          <span class="input-icon"><i class="bi bi-person"></i></span>
+          <input
+            type="text"
+            class="form-control"
+            id="username"
+            placeholder="NISN / NIP / Username"
+            required
+            autocomplete="off"
+          />
+        </div>
+        <div class="input-group-custom">
+          <span class="input-icon"><i class="bi bi-lock"></i></span>
+          <input
+            type="password"
+            class="form-control"
+            id="password"
+            placeholder="Masukkan password"
+            required
+          />
+        </div>
+        <button type="submit" class="btn-login">
+          <i class="bi bi-box-arrow-in-right"></i> LOGIN
+        </button>
+      </form>
 
-        <div class="admin-note">
-            Belum Memiliki Akun? Hubungi <strong>Admin TU / Kurikulum Sekolah</strong>.
-        </div>
+      <div class="admin-note">
+        Belum Memiliki Akun? Hubungi
+        <strong>Admin TU / Kurikulum Sekolah</strong>.
+      </div>
 
-        <div class="social-links">
-            <a href="#" target="_blank"><i class="bi bi-linkedin"></i> LinkedIn</a>
-            <a href="#" target="_blank"><i class="bi bi-instagram"></i> Instagram</a>
-            <a href="#" target="_blank"><i class="bi bi-twitter-x"></i> Twitter</a>
-        </div>
-        <div style="text-align: center; margin-top: 1.2rem; font-size: 0.75rem; color: #64748b;">
-            SMK Pawiyatan Surabaya &bull; Project Praktik
-        </div>
+      <div class="social-links">
+        <a href="#" target="_blank"><i class="bi bi-linkedin"></i> LinkedIn</a>
+        <a href="#" target="_blank"
+          ><i class="bi bi-instagram"></i> Instagram</a
+        >
+        <a href="#" target="_blank"><i class="bi bi-twitter-x"></i> Twitter</a>
+      </div>
+      <div
+        style="
+          text-align: center;
+          margin-top: 1.2rem;
+          font-size: 0.75rem;
+          color: #64748b;
+        "
+      >
+        SMK Pawiyatan Surabaya &bull; Project Praktik
+      </div>
     </div>
 
     <script src="LoginPage.js"></script>
-</body>
+  </body>
 </html>
