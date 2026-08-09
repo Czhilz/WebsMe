@@ -430,10 +430,11 @@ async function populateStudentDropdown() {
   const selectEl = document.getElementById("inputUserId");
   if (!selectEl) return;
 
-  // Optional: Filter students to match the logged-in teacher's assigned class (userSession.kelas_id)
   let query = supabaseClient
     .from("users")
-    .select("id, username, fullname, kelas_id, kelas(nama_kelas)")
+    .select(
+      "id, username, fullname, kelas_id, kelas, kelas:kelas_id(nama_kelas)",
+    )
     .eq("role", "siswa")
     .order("fullname", { ascending: true });
 
@@ -453,7 +454,11 @@ async function populateStudentDropdown() {
     '<option value="">-- Pilih Siswa --</option>' +
     students
       .map((s) => {
-        const namaKelas = s.kelas?.nama_kelas || "Tanpa Kelas";
+        // Priority: Joined object name -> text column -> fallback dash
+        const namaKelas =
+          s.kelas?.nama_kelas ||
+          (typeof s.kelas === "string" ? s.kelas : null) ||
+          "Tanpa Kelas";
         return `<option value="${s.id}">${s.fullname || s.username} (${namaKelas})</option>`;
       })
       .join("");
