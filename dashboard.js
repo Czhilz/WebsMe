@@ -9,24 +9,24 @@ async function loadSession() {
   } = await supabaseClient.auth.getUser();
 
   if (error || !user) {
-    console.error("Auth Error:", error);
-    // window.location.href = "index.html"; // Commented out temporarily for debugging
+    console.error("Auth User Error:", error);
+    window.location.href = "index.html";
     return;
   }
 
-  const { data: userSession, error: profileErr } = await supabaseClient
+  const { data: userSessionData, error: profileErr } = await supabaseClient
     .from("users")
     .select("*")
     .eq("id", user.id)
     .single();
 
-  if (profileErr || !userSession) {
-    console.error("Profile Error:", profileErr);
-    // window.location.href = "index.html"; // Commented out temporarily for debugging
+  if (profileErr || !userSessionData) {
+    console.error("Profile Query Error:", profileErr);
+    alert("Gagal memuat profil user dari database!");
     return;
   }
 
-  initDashboard(userSession);
+  initDashboard(userSessionData);
 }
 
 loadSession();
