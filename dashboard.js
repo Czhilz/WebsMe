@@ -1,5 +1,5 @@
 const SUPABASE_URL = "https://ycnqeieeoleoadomziji.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_ESTYAVuV59-R0FLJzVpgow_8CUukRgE";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InljbnFlaWVlb2xlb2Fkb216aWppIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYxOTg2MDEsImV4cCI6MjEwMTc3NDYwMX0.9PSoayzgE7PoDomvumlkJw22t6VUhqm1JvXBelvyhT4";
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 // Change 'supabaseClient' if your main client variable in script.js has a different name (e.g., just 'supabase')
 const client = window.supabaseClient || window.supabase;
