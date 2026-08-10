@@ -15,31 +15,27 @@ document
       return;
     }
 
-    const { data: user, error } = await supabaseClient
-      .from("users")
-      .select("*")
-      .eq("username", usernameInput)
-      .eq("password", passwordInput)
-      .maybeSingle();
+    // Automatically append school domain suffix
+    const email = usernameInput.includes("@")
+      ? usernameInput
+      : `${usernameInput}@smkpawiyatan.sch.id`;
+
+    // Authenticate via Supabase Auth
+    const { data, error } = await supabaseClient.auth.signInWithPassword({
+      email: email,
+      password: passwordInput,
+    });
 
     if (error) {
-      showAlert("Terjadi kesalahan pada sistem.", "danger");
+      showAlert("NISN/NIP atau Password salah!", "danger");
       return;
     }
 
-    if (user) {
-      localStorage.setItem("currentUser", JSON.stringify(user));
-      showAlert(
-        "Login berhasil! Selamat datang " + (user.fullname || user.username),
-        "success",
-      );
+    showAlert("Login berhasil! Selamat datang", "success");
 
-      setTimeout(() => {
-        window.location.href = "dashboard.html";
-      }, 1500);
-    } else {
-      showAlert("NISN/NIP atau Password salah!", "danger");
-    }
+    setTimeout(() => {
+      window.location.href = "dashboard.html";
+    }, 1500);
   });
 
 function showAlert(message, type) {
