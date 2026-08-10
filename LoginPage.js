@@ -2,41 +2,41 @@ const SUPABASE_URL = "https://ycnqeieeoleoadomziji.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_ESTYAVuV59-R0FLJzVpgow_8CUukRgE";
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-document
-  .getElementById("loginForm")
-  .addEventListener("submit", async function (e) {
-    e.preventDefault();
+document.getElementById("loginForm")?.addEventListener("submit", async function (e) {
+  e.preventDefault();
 
-    const usernameInput = document.getElementById("username").value.trim();
-    const passwordInput = document.getElementById("password").value;
+  const usernameInput = document.getElementById("username").value.trim();
+  const passwordInput = document.getElementById("password").value;
 
-    if (!usernameInput || !passwordInput) {
-      showAlert("Username dan password harus diisi!", "danger");
-      return;
-    }
+  if (!usernameInput || !passwordInput) {
+    showAlert("Username dan password harus diisi!", "danger");
+    return;
+  }
 
-    // Automatically append school domain suffix
-    const email = usernameInput.includes("@")
-      ? usernameInput
-      : `${usernameInput}@smkpawiyatan.sch.id`;
+  // Auto-append domain if user only types NIP/NISN (e.g., 00100)
+  const email = usernameInput.includes("@")
+    ? usernameInput
+    : `${usernameInput}@smkpawiyatan.sch.id`;
 
-    // Authenticate via Supabase Auth
-    const { data, error } = await supabaseClient.auth.signInWithPassword({
-      email: email,
-      password: passwordInput,
-    });
-
-    if (error) {
-      showAlert("NISN/NIP atau Password salah!", "danger");
-      return;
-    }
-
-    showAlert("Login berhasil! Selamat datang", "success");
-
-    setTimeout(() => {
-      window.location.href = "dashboard.html";
-    }, 1500);
+  // === PUT THE SNIPPET HERE ===
+  const { data, error } = await supabaseClient.auth.signInWithPassword({
+    email: email,
+    password: passwordInput,
   });
+
+  if (error) {
+    console.log("Supabase Auth Error:", error.message); // Logs exact error to F12 console
+    showAlert("NISN/NIP atau Password salah!", "danger");
+    return;
+  }
+  // ============================
+
+  showAlert("Login berhasil! Selamat datang", "success");
+
+  setTimeout(() => {
+    window.location.href = "dashboard.html";
+  }, 1500);
+});
 
 function showAlert(message, type) {
   const alertEl = document.getElementById("alertMessage");
