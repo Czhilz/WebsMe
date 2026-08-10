@@ -3,7 +3,10 @@ const SUPABASE_ANON_KEY = "sb_publishable_ESTYAVuV59-R0FLJzVpgow_8CUukRgE";
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 async function loadSession() {
-  const { data: { user }, error } = await supabaseClient.auth.getUser();
+  const {
+    data: { user },
+    error,
+  } = await supabaseClient.auth.getUser();
 
   if (error || !user) {
     console.error("Auth Error:", error);
@@ -28,7 +31,13 @@ async function loadSession() {
 
 loadSession();
 
+// Global reference so switchTab can read user session details
+let userSession = null;
+
 function initDashboard(user) {
+  userSession = user;
+  console.log("Current User Session:", userSession);
+
   const fullname = user.fullname || user.username;
   const role = (user.role || "siswa").toLowerCase();
 
@@ -38,6 +47,11 @@ function initDashboard(user) {
   document.getElementById("welcomeRole").textContent = role;
 
   updateThemeUI();
+
+  // Hide all views first to prevent overlap
+  document
+    .querySelectorAll(".role-view")
+    .forEach((view) => view.classList.add("d-none"));
 
   if (role === "admin") {
     document.getElementById("viewAdmin")?.classList.remove("d-none");
@@ -54,6 +68,7 @@ function initDashboard(user) {
 }
 
 window.switchTab = function (tabName) {
+  if (!userSession) return;
   const role = (userSession.role || "siswa").toLowerCase();
 
   document
