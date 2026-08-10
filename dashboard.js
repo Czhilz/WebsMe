@@ -5,35 +5,33 @@ const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 const client = window.supabaseClient || window.supabase;
 
 async function loadSession() {
-  // 1. Get current auth user
-  const { data: { user }, error: authErr } = await supabaseClient.auth.getUser();
+  // 1. Read local storage session first
+  const { data: { session }, error: sessionErr } = await supabaseClient.auth.getSession();
 
-  console.log("1. Auth User:", user, authErr);
-
-  if (authErr || !user) {
-    console.error("No valid auth session found!");
-    // COMMENT THIS OUT TEMPORARILY:
-    // window.location.href = "index.html"; 
+  if (sessionErr || !session) {
+    console.error("No active session in localStorage:", sessionErr);
+    window.location.href = "index.html";
     return;
   }
 
-  // 2. Get profile from public.users
-  const { data: profile, error: profileErr } = await supabaseClient
+  // 2. Fetch authenticated user data
+  const user = session.user;
+
+  // 3. Get profile from public.users table
+  const { data: userSessionData, error: profileErr } = await supabaseClient
     .from("users")
     .select("*")
     .eq("id", user.id)
     .single();
 
-  console.log("2. User Profile:", profile, profileErr);
-
-  if (profileErr || !profile) {
-    console.error("Failed to load profile:", profileErr);
-    // COMMENT THIS OUT TEMPORARILY:
-    // window.location.href = "index.html";
+  if (profileErr || !userSessionData) {
+    console.error("Profile fetch error:", profileErr);
+    alert("Profile error: " + profileErr.message);
+    window.location.href = "index.html";
     return;
   }
 
-  initDashboard(profile);
+  initDashboard(userSessionData);
 }
 
 loadSession();
