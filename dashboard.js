@@ -5,42 +5,39 @@ const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 const client = window.supabaseClient || window.supabase;
 
 async function loadSession() {
-  // Wait briefly for Supabase to restore session from storage
-  await new Promise((resolve) => setTimeout(resolve, 200));
+  // 1. Get current auth user
+  const { data: { user }, error: authErr } = await supabaseClient.auth.getUser();
 
-  const {
-    data: { user },
-    error: authError,
-  } = await client.auth.getUser();
+  console.log("1. Auth User:", user, authErr);
 
-  if (authError || !user) {
-    console.error("Auth session missing:", authError);
-    window.location.href = "index.html";
+  if (authErr || !user) {
+    console.error("No valid auth session found!");
+    // COMMENT THIS OUT TEMPORARILY:
+    // window.location.href = "index.html"; 
     return;
   }
 
-  const { data: userSessionData, error: profileErr } = await client
+  // 2. Get profile from public.users
+  const { data: profile, error: profileErr } = await supabaseClient
     .from("users")
     .select("*")
     .eq("id", user.id)
     .single();
 
-  if (profileErr || !userSessionData) {
-    console.error("Profile fetch failed:", profileErr);
-    alert(
-      "Gagal memuat profil: " +
-        (profileErr?.message || "User tidak ditemukan di database"),
-    );
-    window.location.href = "index.html";
+  console.log("2. User Profile:", profile, profileErr);
+
+  if (profileErr || !profile) {
+    console.error("Failed to load profile:", profileErr);
+    // COMMENT THIS OUT TEMPORARILY:
+    // window.location.href = "index.html";
     return;
   }
 
-  initDashboard(userSessionData);
+  initDashboard(profile);
 }
 
-// Run session loader on page load
 loadSession();
-// Global reference so switchTab can read user session details
+
 
 let userSession = null;
 
