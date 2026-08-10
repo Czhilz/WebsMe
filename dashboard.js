@@ -3,13 +3,11 @@ const SUPABASE_ANON_KEY = "sb_publishable_ESTYAVuV59-R0FLJzVpgow_8CUukRgE";
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 async function loadSession() {
-  const {
-    data: { user },
-    error,
-  } = await supabaseClient.auth.getUser();
+  const { data: { user }, error } = await supabaseClient.auth.getUser();
 
   if (error || !user) {
-    window.location.href = "index.html";
+    console.error("Auth Error:", error);
+    // window.location.href = "index.html"; // Commented out temporarily for debugging
     return;
   }
 
@@ -20,11 +18,11 @@ async function loadSession() {
     .single();
 
   if (profileErr || !userSession) {
-    window.location.href = "index.html";
+    console.error("Profile Error:", profileErr);
+    // window.location.href = "index.html"; // Commented out temporarily for debugging
     return;
   }
 
-  // Pass user profile directly into your existing init function
   initDashboard(userSession);
 }
 
