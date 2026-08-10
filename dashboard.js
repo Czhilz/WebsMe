@@ -2,16 +2,33 @@ const SUPABASE_URL = "https://ycnqeieeoleoadomziji.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_ESTYAVuV59-R0FLJzVpgow_8CUukRgE";
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-let userSession =
-  typeof currentUser !== "undefined"
-    ? currentUser
-    : JSON.parse(localStorage.getItem("currentUser"));
+async function loadSession() {
+  const {
+    data: { user },
+    error,
+  } = await supabaseClient.auth.getUser();
 
-if (!userSession) {
-  window.location.href = "index.html";
-} else {
+  if (error || !user) {
+    window.location.href = "index.html";
+    return;
+  }
+
+  const { data: userSession, error: profileErr } = await supabaseClient
+    .from("users")
+    .select("*")
+    .eq("id", user.id)
+    .single();
+
+  if (profileErr || !userSession) {
+    window.location.href = "index.html";
+    return;
+  }
+
+  // Pass user profile directly into your existing init function
   initDashboard(userSession);
 }
+
+loadSession();
 
 function initDashboard(user) {
   const fullname = user.fullname || user.username;
