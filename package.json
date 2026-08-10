@@ -1,0 +1,24 @@
+{
+  "name": "websme",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dashboard.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Czhilz/WebsMe.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Czhilz/WebsMe/issues"
+  },
+  "homepage": "https://github.com/Czhilz/WebsMe#readme",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.112.2"
+  }
+}
