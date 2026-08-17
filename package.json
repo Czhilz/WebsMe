@@ -20,5 +20,11 @@
   "homepage": "https://github.com/Czhilz/WebsMe#readme",
   "dependencies": {
     "@supabase/supabase-js": "^2.112.2"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/lodash": "^4.17.25",
+    "@types/node": "^26.2.0",
+    "typescript": "^7.0.2"
   }
 }
